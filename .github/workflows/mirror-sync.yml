@@ -1,0 +1,24 @@
+name: Mirror Sync
+
+on:
+  scheldule:
+    - cron: "*/10 * * * *"  # every 10 minutes
+  workflow_dispatch:        # allows manual run
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to mirror repo
+        env:
+          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
+        run: |
+          git remote add mirror https://c-access-token:${MIRROR_TOKEN}@github.com/lbayleycr/mirror-repo-test.git
+          git push mirror --all
+          git push mirror --tags
