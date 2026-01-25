@@ -10,20 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source repo (no bot creds)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           persist-creentials: false
-
-      - name: Debug token presence (masked)
-        env:
-          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
-        run:  |
-          if [ -z "$MIRROR_TOKEN" ]; then
-            echo "MIRROR_TOKEN is EMPTY or missing"
-            exit 1
-          fi
-          echo "MIRROR_TOKEN is present (length: ${#MIRROR_TOKEN})"
 
       - name: Push to mirror repo using PAT
         env:
