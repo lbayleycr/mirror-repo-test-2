@@ -25,6 +25,7 @@ jobs:
           persist-credentials: false
 
       - name: Run mirror script
+        shell: bash
         env:
           TARGET_URL: https://github.com/lbayleycr/mirror-repo-test.git
           GIT_TOKEN: ${{ secrets.MIRROR_TOKEN }}
