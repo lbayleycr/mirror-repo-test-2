@@ -1,24 +1,36 @@
 name: Mirror Sync
 
 on:
-  schedule:
-    - cron: "*/10 * * * *"  # every 10 minutes
-  workflow_dispatch:        # allows manual run
+  workflow_dispatch:
+  scheldule:
+    - cron: "*/10 * * * *"
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout source repo
+      - name: Checkout source repo (no bot creds)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-creentials: false
 
-      - name: Push to mirror repo
+      - name: Debug token presence (masked)
+        env:
+          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
+        run:  |
+          if [ -z "$MIRROR_TOKEN" ]; then
+            echo "MIRROR_TOKEN is EMPTY or missing"
+            exit 1
+          fi
+          echo "MIRROR_TOKEN is present (length: ${#MIRROR_TOKEN})"
+
+      - name: Push to mirror repo using PAT
         env:
           MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
         run: |
-          git remote add mirror https://c-access-token:${MIRROR_TOKEN}@github.com/lbayleycr/mirror-repo-test.git
+          git remote remove mirror || true
+          git remote add mirror https://x-access-token:${MIRROR_TOKEN}@github.com/lbayleycr/mirror-repo-test.git
+          git remote -v
           git push mirror --all
           git push mirror --tags
