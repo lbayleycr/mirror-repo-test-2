@@ -5,39 +5,29 @@ on:
   push:
     branches: [ "master" ]
   schedule:
-    - cron: "*/2 * * * *"
+    - cron: "*/10 * * * *"
 
 permissions:
-  contents: none  # disable github-actions[bot] completely
+  contents: read
+
+concurrency:
+  group: mirror-sync
+  cancel-in-progress: true
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout source repo (no bot creds)
+      - name: Checkout source repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Verify token exists
+      - name: Run mirror script
         env:
-          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
+          TARGET_URL: https://github.com/lbayleycr/mirror-repo-test.git
+          GIT_TOKEN: ${{ secrets.MIRROR_TOKEN }}
         run: |
-          if [ -z "$MIRROR_TOKEN" ]; then
-            echo "MIRROR_TOKEN is missing"
-            exit 1
-          fi
-          echo "MIRROR_TOKEN present"
-
-      - name: Push to mirror repo using PAT
-        env:
-          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
-        run: |
-          echo "=== RUN START ==="
-          date
-          git remote remove mirror || true
-          git remote add mirror https://x-access-token:${MIRROR_TOKEN}@github.com/lbayleycr/mirror-repo-test.git
-          git push mirror --all --no-verify
-          git push mirror --tags
+          chmod +x mirror_sync.sh
+          ./mirror_sync.sh
