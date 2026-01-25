@@ -18,7 +18,7 @@ git fetch --all --tags --prune
 
 # Build authenticated URL if HTTPS + token provided
 TARGET_AUTH_URL="$TARGET_URL"
-if [[ "$TARGET_URL" == https://* ]] && [[ "${GIT_TOKEN:-}" != ""]]; then
+if [[ "$TARGET_URL" == https://* && "${GIT_TOKEN:-}" != ""]]; then
   TARGET_AUTH_URL="https://x-access-token:${GIT_TOKEN}@${TARGET_URL#https://}"
 fi
 
