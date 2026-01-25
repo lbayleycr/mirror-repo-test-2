@@ -21,6 +21,5 @@ jobs:
         run: |
           git remote remove mirror || true
           git remote add mirror https://x-access-token:${MIRROR_TOKEN}@github.com/lbayleycr/mirror-repo-test.git
-          git remote set-url https://x-access-token:${MIRROR_TOKEN}@github.com/lbayleycr/mirror-repo-test.git
           git push mirror --all
           git push mirror --tags
