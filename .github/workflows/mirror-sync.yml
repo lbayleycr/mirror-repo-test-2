@@ -2,7 +2,7 @@ name: Mirror Sync
 
 on:
   workflow_dispatch:
-  scheldule:
+  schedule:
     - cron: "*/10 * * * *"
 
 jobs:
